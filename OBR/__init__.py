@@ -1,5 +1,8 @@
 # Expose internal classes
-from .OBR import OBR
+from .BrailleImage import BrailleImage
+from .SegmentationEngine import SegmentationEngine 
+from .BrailleCharacter import BrailleCharacter
+from .BrailleClassifier import BrailleClassifier
 
-VERSION = "0.0.1"
-CODENAME = "Black Bullet"
+_version_ = "0.0.1"
+_codename_ = "Black Bullet"
