@@ -12,58 +12,55 @@
 	.input_image {
 		display: block;
 		max-width:100vw;
-		max-height:30vh;
+		max-height:45vh;
 		width: auto;
 		height: auto;
 	}
     </style>
   </head>
   <body>
-   <div class="container">
-	  <h1 align="center">Optical Braille Recognition</h1>
-	  <hr/>
-	   <div align="center" class="container" style="margin-top: 20px">
-	  <img id="input" src="/current_image" class="img-fluid input_image" alt="Braille Text">
+  <div class="container">
+  <h1 align="center">Optical Braille Recognition</h1>
+  <div align="center" class="container">
+	  <img id="inputimage" src="/coverimage" class="img-fluid input_image" alt="Raw"/>
 
 	  <br> 
 	  <kbd id="output">PRESS THE DIGEST BUTTON TO GET THE ENGLISH TEXT FOR THE ABOVE IMAGE</kbd>
 	  <br>
 	  <div style="margin-top: 20px;margin-bottom: 20px;" align="center" class="container">
-	  <button
-	   type="button"
-	   class="btn btn-success"
-	   onclick="digest()">
-		  Digest
-	  </button>
-	  <form action="/upload" method=post enctype=multipart/form-data>
-	  <input type=file name=file>
-	  <input
-	   type=submit
-	   value="Upload Image"
-	   class="btn btn-info"></input>
-	  </form>
-	  </div>
-	  </div>
-	  <div align="center" class="container-md">
-	  Optical braille recognition is the act of capturing and processing images of braille characters into natural language characters. This project aims to detect and segment braille characters from <b>single sided english braille text</b>, The segmented braille characters can be classified by a simple algorithm built in or can be analysed further by advanced systems.
-	  <br/>
-	  </div>
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="mb-3 mt-3">
+	     <div id="alert_wrapper"></div>
+    
+	<!--<h2 class="mb-3" style="font-weight: 300">Digest Braille Image</h2>-->
+          <div class="form-group mb-3">
+            <div class="custom-file">
+              <input type="file" class="custom-file-input" name="file_input" id="file_input" oninput="input_filename();">
+              <label id="file_input_label" class="custom-file-label" for="image">Select file</label>
+            </div>
+          </div>
+          <button onclick="upload('/digest');" id="upload_btn" class="btn btn-primary">Digest</button>
+          <button class="btn btn-primary d-none" id="loading_btn" type="button" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Uploading...
+          </button>
+          <button type="button" id="cancel_btn" class="btn btn-secondary d-none">Cancel upload</button>
+        </div>
+        <div id="progress_wrapper" class="d-none">
+          <label id="progress_status"></label>
+          <div class="progress mb-3">
+            <div id="progress" class="progress-bar" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+        </div>
+        <div id="alert_wrapper"></div>
+      </div>
+    </div>
+  </div>
 
-	  <div align="center" class="container" style="margin-top: 10px;">
-		  <button 
-		   type="button"
-		   class="btn btn-dark"
-		   onclick="openUrl('https://raw.githubusercontent.com/antony-jr/OpticalBrailleRecognition/master/docs/whitepaper.pdf')">
-		   Whitepaper
-		  </button>
-
-		  <button
-		   type="button"
-		   class="btn btn-primary"
-		   onclick="openUrl('https://github.com/antony-jr/OpticalBrailleRecognition')"
-		   >
-		   Project Page
-		  </button>
+ 
+	  </div>
 	  </div>
    </div>
 
@@ -72,16 +69,166 @@
 		    window.open(url, '_blank');
 	    }
 
-	    function digest() {
-		var xhttp = new XMLHttpRequest();
-		xhttp.onreadystatechange = function() {
-			if (this.readyState == 4 && this.status == 200) {
-				document.getElementById("output").innerHTML = this.responseText;
-				document.getElementById("input").src = '/processed_image';
-			}
-		};
-		xhttp.open("GET", "digest", true)
-		xhttp.send()
+	    // Get a reference to the progress bar, wrapper & status label
+	    var progress = document.getElementById("progress");
+	    var progress_wrapper = document.getElementById("progress_wrapper");
+	    var progress_status = document.getElementById("progress_status");
+
+	    // Get a reference to the 3 buttons
+	    var upload_btn = document.getElementById("upload_btn");
+	    var loading_btn = document.getElementById("loading_btn");
+	    var cancel_btn = document.getElementById("cancel_btn");
+
+	    // Get a reference to the alert wrapper
+	    var alert_wrapper = document.getElementById("alert_wrapper");
+
+	    // Get a reference to the file input element & input label 
+	    var input = document.getElementById("file_input");
+	    var file_input_label = document.getElementById("file_input_label");
+
+	    // Get a reference to the input image
+	    var input_image = document.getElementById("inputimage");
+	    var output_text = document.getElementById("output");
+
+	    // Function to show alerts
+	    function show_alert(message, alert) {
+	        alert_wrapper.innerHTML = `
+			<div id="alert" class="alert alert-${alert} alert-dismissible fade show" role="alert">
+			<span>${message}</span>
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+			</button>
+			</div>`
+	    }
+
+	    // Function to upload file
+	    function upload(url) {
+		    // Reject if the file input is empty & throw alert
+		    if (!input.value) {
+			    show_alert("No file selected", "warning")
+			    return;
+		    }
+		    // Create a new FormData instance
+		    var data = new FormData();
+
+		    // Create a XMLHTTPRequest instance
+		    var request = new XMLHttpRequest();
+
+		    // Set the response type
+		    request.responseType = "json";
+
+		    // Clear any existing alerts
+		    alert_wrapper.innerHTML = "";
+
+		    // Disable the input during upload
+		    input.disabled = true;
+
+		    // Hide the upload button
+		    upload_btn.classList.add("d-none");
+
+		    // Show the loading button
+		    loading_btn.classList.remove("d-none");
+
+		    // Show the cancel button
+		    cancel_btn.classList.remove("d-none");
+
+		    // Show the progress bar
+		    progress_wrapper.classList.remove("d-none");
+
+		    // Get a reference to the file
+		    var file = input.files[0];
+
+		    // Get a reference to the filename
+		    var filename = file.name;
+
+		    // Get a reference to the filesize & set a cookie
+		    var filesize = file.size;
+		    document.cookie = `filesize=${filesize}`;
+
+		    // Append the file to the FormData instance
+		    data.append("file", file);
+
+		    request.upload.addEventListener("progress", function (e) {
+			    // Get the loaded amount and total filesize (bytes)
+			    var loaded = e.loaded;
+			    var total = e.total
+
+			    // Calculate percent uploaded
+			    var percent_complete = (loaded / total) * 100;
+
+			    // Update the progress text and progress bar
+			    progress.setAttribute("style", `width: ${Math.floor(percent_complete)}%`);
+			    progress_status.innerText = `${Math.floor(percent_complete)}% uploaded`;
+		    })
+
+		    // request load handler (transfer complete)
+		    request.addEventListener("load", function (e) {
+			    console.log(request.response)
+			    if (request.status == 200) {
+				    if(request.response.error){
+					    show_alert(request.response.message, "danger");
+				    }else{
+					input_image.src = '/procimage/' + request.response.img_id;
+					output_text.innerText = request.response.digest;
+				    	show_alert(`${request.response.message}`, "success");
+				    }
+			    }else {
+				    show_alert(`Error uploading file`, "danger");
+			    }
+			    reset();
+		    });
+
+		    // request error handle
+		    request.addEventListener("error", function (e) {
+			    reset();
+			    show_alert(`Error uploading file`, "warning");
+		    });
+
+		    // request abort handler
+		    request.addEventListener("abort", function (e) {
+			    reset();
+			    show_alert(`Upload cancelled`, "primary");
+		    });
+
+		    // Open and send the request
+		    request.open("post", url);
+		    request.send(data);
+
+		    cancel_btn.addEventListener("click", function () {
+			    request.abort();
+		    })
+	    }
+
+	    // Function to update the input placeholder
+	    function input_filename() {
+		    file_input_label.innerText = input.files[0].name;
+	    }
+
+	    // Function to reset the page
+	    function reset() {
+		    // Clear the input
+		    input.value = null;
+
+		    // Hide the cancel button
+		    cancel_btn.classList.add("d-none");
+
+		    // Reset the input element
+		    input.disabled = false;
+
+		    // Show the upload button
+		    upload_btn.classList.remove("d-none");
+
+		    // Hide the loading button
+		    loading_btn.classList.add("d-none");
+
+		    // Hide the progress bar
+		    progress_wrapper.classList.add("d-none");
+
+		    // Reset the progress bar state
+		    progress.setAttribute("style", `width: 0%`);
+		    
+		    // Reset the input placeholder
+		    file_input_label.innerText = "Select file";
 	    }
     </script>
 
