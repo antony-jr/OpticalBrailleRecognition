@@ -12,7 +12,7 @@ If you want a Documentation, please raise an issue.*
 
 # Try it
 
-Please visit [this](https://opticalbraillerecognition-demo.herokuapp.comm) heroku application to see the demo.
+Please visit [this](https://opticalbraillerecognition-demo.herokuapp.com) heroku application to see the demo.
 
 # License
 
