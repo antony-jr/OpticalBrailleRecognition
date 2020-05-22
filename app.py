@@ -35,9 +35,7 @@ def proc_image(img_id):
     print(img_id)
     image = '{}/{}-proc.png'.format(tempdir.name, secure_filename(img_id))
     if os.path.exists(image) and os.path.isfile(image):
-        r = send_file(image, mimetype='image/png')
-        os.unlink(image)
-        return r
+        return send_file(image, mimetype='image/png')
     return redirect('/coverimage')
 
 @app.route('/digest', methods=['POST'])
