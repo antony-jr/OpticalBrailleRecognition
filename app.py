@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 from OBR import SegmentationEngine,BrailleClassifier,BrailleImage
 
 
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 tempdir = tempfile.TemporaryDirectory()
 
 app = Flask("Optical Braille Recognition Demo")
@@ -32,6 +32,7 @@ def cover_image():
 @app.route('/procimage/<string:img_id>')
 def proc_image(img_id):
     global tempdir
+    print(img_id)
     image = '{}/{}-proc.png'.format(tempdir.name, secure_filename(img_id))
     if os.path.exists(image) and os.path.isfile(image):
         r = send_file(image, mimetype='image/png')

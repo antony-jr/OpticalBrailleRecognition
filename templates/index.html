@@ -168,7 +168,10 @@
 				    if(request.response.error){
 					    show_alert(request.response.message, "danger");
 				    }else{
-					input_image.src = '/procimage/' + request.response.img_id;
+					input_image.src = '/procimage/' + 
+						          request.response.img_id +
+						          '?' +
+						           Date.now();
 					output_text.innerText = request.response.digest;
 				    	show_alert(`${request.response.message}`, "success");
 				    }
