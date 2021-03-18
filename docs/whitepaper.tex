@@ -2,6 +2,7 @@
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
+\usepackage{hyperref}
 \graphicspath{ {graphics/} }
 
 \title{CONTOUR BASED OPTICAL BRAILLE RECOGNITION FOR SINGLE SIDED ENGLISH BRAILLE TEXT}
@@ -182,16 +183,9 @@ With each Braille Character segmented as separate images we can do simple image 
 
 
 \begin{figure}[!htb]
-\caption{X and Y coordinates found by the Segmentation}
-\centering
-\includegraphics[scale=0.4]{xy}
-\end{figure}
-
-
-\begin{figure}[!htb]
 \caption{Braille Characters Bounded by a Bounding Rectangle}
 \centering
-\includegraphics[scale=0.4]{rectangle}
+\includegraphics[scale=0.2]{rectangle}
 \end{figure}
 
 \section{Future Works}
@@ -209,10 +203,10 @@ We believe that this study can be deployed in Mobile Systems with ease compared 
 
 \section{Miscellaneous}
 
-The source code of this entire study can be found at \url{https://github.com/antony-jr/OpticalBrailleRecognition} which is licensed under \textbf{The BSD 3-clause "New" or "Revised" License.}
+The source code of this entire study can be found at \href{https://github.com/antony-jr/OpticalBrailleRecognition}{github} which is licensed under \textbf{The BSD 3-clause "New" or "Revised" License.}
 
-A application to demonstrate this study is hosted at \url{https://opticalbraillerecognition-demo.herokuapp.com/}.
 
-Contact Author at \url{https://antonyjr.in}.
+
+A application to demonstrate this study is hosted at \href{https://opticalbraillerecognition-demo.herokuapp.com/}{heroku}.
 
 \end{document}
