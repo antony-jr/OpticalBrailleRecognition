@@ -5,7 +5,7 @@
 \graphicspath{ {graphics/} }
 
 \title{CONTOUR BASED OPTICAL BRAILLE RECOGNITION FOR SINGLE SIDED ENGLISH BRAILLE TEXT}
-\author{Antony J.R.}
+\author{Divya Antony J.R.}
 \date{March 2020}
 \begin{document}
 \maketitle
@@ -158,7 +158,61 @@ Contours are simple curve joining all the continuous points (along the boundary)
 
 We find contours by a method proposed by \textbf{Satoshi Suzuki et el}. This method is already implemented in \textbf{OpenCV} so we need not define the entire algorithm as it exceeds the scope of this study.
 
-Once we find the contours we do the \textbf{braille character segmentation}.
+Once we find the contours we do the \textbf{Braille Character Segmentation}.
 
+
+\section{Braille Character Segmentation}
+
+
+Segmentation is very simply built and unique to our study. The main feature about this segmentation is that this research can be further improved with Artificial Neural Networks if desired as this segmentation allows us to separate individual braille character with all the pixel data required for Convolutional Neural Networks.
+
+The Segmentation process is as follows,
+
+
+\begin{enumerate}
+  \item Calculate the \textbf{Mean Radius and Diameter} of each dots in each Braille Character using the Contours.
+  \item Using the Radius and Diameter, Find the \textbf{Center Point} of all dots in each Braille Characters.
+  \item Find the smallest \textbf{Center Point} of all dots in each Braille Characters in both X and Y Axis.
+  \item With the X and Y points find all possible Braille Characters as \textbf{3x2} matrix.
+  \item Get each Braille Character bounding Rectangle Coordinates.
+  \item With the bounding Rectangle Coordinates, Each Braille Character can be Segmented.
+\end{enumerate}
+
+With each Braille Character segmented as separate images we can do simple image processing to convert the image to a \textbf{3x2} matrix, this matrix can be converted to \textbf{vector with single dimension}. Each combination of such vectors will represent a character in English, Thus a sentence can be constructed.
+
+
+\begin{figure}[!htb]
+\caption{X and Y coordinates found by the Segmentation}
+\centering
+\includegraphics[scale=0.4]{xy}
+\end{figure}
+
+
+\begin{figure}[!htb]
+\caption{Braille Characters Bounded by a Bounding Rectangle}
+\centering
+\includegraphics[scale=0.4]{rectangle}
+\end{figure}
+
+\section{Future Works}
+
+In future we propose to use Convolution Neural Network to classify each Braille Image for better accuracy and classification instead of using a Combination Hash Table as used in our Study.
+
+
+\section{Conclusion}
+
+Our study was able to do the segmentation and Braille Recognition in real time and at a state-of-the-art speed compared to any Artificial Neural Network based Segmentation methods. This Braille Recognition can be done in low powered devices also since we do not use complex system like Convolutional Neural Network. The accuracy is on par with any Aritficial Neural Network based Braille Recognition to the best of our knowledge with \textbf{98.457\%}.
+
+We believe that this study can be deployed in Mobile Systems with ease compared to Artificial Neural Network based Braille Recognition.
+
+
+
+\section{Miscellaneous}
+
+The source code of this entire study can be found at \url{https://github.com/antony-jr/OpticalBrailleRecognition} which is licensed under \textbf{The BSD 3-clause "New" or "Revised" License.}
+
+A application to demonstrate this study is hosted at \url{https://opticalbraillerecognition-demo.herokuapp.com/}.
+
+Contact Author at \url{https://antonyjr.in}.
 
 \end{document}
