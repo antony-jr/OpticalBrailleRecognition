@@ -2,5 +2,5 @@ opencv-python-headless==4.2.0.34
 Flask==1.1.1
 requests==2.23.0
 requests-cache==0.5.2
-Werkzeug==0.16.0
+Werkzeug==2.2.3
 gunicorn==20.0.4
